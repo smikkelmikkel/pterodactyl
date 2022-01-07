@@ -60,6 +60,6 @@ class NodeCommand extends Command
         Storage::disk('local')->put('daemon_token.txt', $daemon_token2);
         Storage::disk('local')->put('daemon_token_id.txt', $daemon_token_id);
 
-        DB::table('nodes')->insert(['uuid' => $uuid, 'name' => 'Node 01', 'description' => 'Gehost door MyNode', 'location_id' => '1', 'fqdn' => $fqdn, 'scheme' => $scheme, 'behind_proxy' => '0', 'maintenance_mode' => '0', 'memory' => '8000', 'memory_overallocate' => '-1', 'disk' => '80000', 'disk_overallocate' => '-1', 'upload_size' => '100', 'daemon_token_id' => $daemon_token_id, 'daemon_token' => $daemon_token, 'daemonListen' => '8080', 'daemonSFTP' => '2022', 'daemonBase' => '/var/lib/pterodactyl/volumes']);
+        DB::table('nodes')->insert(['uuid' => $uuid, 'name' => 'Node 01', 'description' => 'Gemaakt door Maikel', 'location_id' => '1', 'fqdn' => $fqdn, 'scheme' => $scheme, 'behind_proxy' => '0', 'maintenance_mode' => '0', 'memory' => '8000', 'memory_overallocate' => '-1', 'disk' => '80000', 'disk_overallocate' => '-1', 'upload_size' => '100', 'daemon_token_id' => $daemon_token_id, 'daemon_token' => $daemon_token, 'daemonListen' => '8080', 'daemonSFTP' => '2022', 'daemonBase' => '/var/lib/pterodactyl/volumes']);
     }
 }
