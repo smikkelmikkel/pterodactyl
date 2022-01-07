@@ -8,6 +8,7 @@ use Ramsey\Uuid\Uuid;
 use Illuminate\Support\Str;
 use Pterodactyl\Models\Node;
 use Illuminate\Contracts\Encryption\Encrypter;
+use Illuminate\Support\Facades\Storage;
 
 class NodeCommand extends Command
 {
@@ -16,7 +17,7 @@ class NodeCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:node';
+    protected $signature = 'command:node {--fqdn=} {--scheme=}';
 
     /**
      * The console command description.
@@ -49,9 +50,16 @@ class NodeCommand extends Command
     public function handle()
     {
         $uuid = Uuid::uuid4()->toString();
-        $daemon_token = $this->encrypter->encrypt(Str::random(Node::DAEMON_TOKEN_LENGTH));
+        $daemon_token2 = Str::random(Node::DAEMON_TOKEN_LENGTH);
+        $daemon_token = $this->encrypter->encrypt($daemon_token2);
         $daemon_token_id = Str::random(Node::DAEMON_TOKEN_ID_LENGTH);
+        $fqdn = $this->option('fqdn');
+        $scheme = $this->option('scheme');
 
-        DB::table('nodes')->insert(['uuid' => $uuid, 'name' => 'Node 01', 'description' => 'Script gemaakt door Maikel', 'location_id' => '1', 'fqdn' => '45.13.59.15', 'scheme' => 'http', 'behind_proxy' => '0', 'maintenance_mode' => '0', 'memory' => '8000', 'memory_overallocate' => '-1', 'disk' => '80000', 'disk_overallocate' => '-1', 'upload_size' => '100', 'daemon_token_id' => $daemon_token_id, 'daemon_token' => $daemon_token, 'daemonListen' => '8080', 'daemonSFTP' => '2022', 'daemonBase' => '/var/lib/pterodactyl/volumes']);
+        Storage::disk('local')->put('uuid.txt', $uuid);
+        Storage::disk('local')->put('daemon_token.txt', $daemon_token2);
+        Storage::disk('local')->put('daemon_token_id.txt', $daemon_token_id);
+
+        DB::table('nodes')->insert(['uuid' => $uuid, 'name' => 'Node 01', 'description' => 'Gehost door MyNode', 'location_id' => '1', 'fqdn' => $fqdn, 'scheme' => $scheme, 'behind_proxy' => '0', 'maintenance_mode' => '0', 'memory' => '8000', 'memory_overallocate' => '-1', 'disk' => '80000', 'disk_overallocate' => '-1', 'upload_size' => '100', 'daemon_token_id' => $daemon_token_id, 'daemon_token' => $daemon_token, 'daemonListen' => '8080', 'daemonSFTP' => '2022', 'daemonBase' => '/var/lib/pterodactyl/volumes']);
     }
 }
