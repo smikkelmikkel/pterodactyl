@@ -50,12 +50,12 @@ chmod -R 755 storage/* bootstrap/cache/
 
 # mysql setup
 
-mysql -u root -e "CREATE USER '${MYSQL_USER}'@'$FQDN' IDENTIFIED BY '${MYSQL_PASSWORD}';"
+mysql -u root -e "CREATE USER '${MYSQL_USER}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 mysql -u root -e "CREATE DATABASE ${MYSQL_DATABASE};"
-mysql -u root -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'$FQDN' WITH GRANT OPTION;"
+mysql -u root -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
 mysql -u root -e "FLUSH PRIVILEGES;"
-mysql -u root -e "CREATE USER '${MYSQL_USER_PANEL}'@'$FQDN' IDENTIFIED BY '${MYSQL_PASSWORD_PANEL}';"
-mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER_PANEL}'@'$FQDN' WITH GRANT OPTION;"
+mysql -u root -e "CREATE USER '${MYSQL_USER_PANEL}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD_PANEL}';"
+mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER_PANEL}'@'127.0.0.1' WITH GRANT OPTION;"
 mysql -u root -e "FLUSH PRIVILEGES;"
 mysql -u root panel << EOF
 insert into database_hosts (name,host,port,username,password,node_id) values ('DB01', ${FQDN}, '3306', ${MYSQL_USER_PANEL}, ${MYSQL_PASSWORD_PANEL}, '1');
@@ -64,12 +64,15 @@ sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/my.cnf
 sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
 # installatie pterodactyl
 
+sleep 30s
+
+
 cp .env.example .env
 composer install --no-dev --optimize-autoloader
 php artisan key:generate --force
 
 php artisan p:environment:setup --author=$EMAIL --url=$URL --timezone=Europe/Amsterdam --cache=redis --session=redis --queue=redis --redis-host=127.0.0.1 --redis-pass=null --redis-port=6379  --settings-ui=true
-php artisan p:environment:database --host=$FQDN --port=3306 --database=$MYSQL_DATABASE --username=$MYSQL_USER --password=$MYSQL_PASSWORD
+php artisan p:environment:database --host=127.0.0.1 --port=3306 --database=$MYSQL_DATABASE --username=$MYSQL_USER --password=$MYSQL_PASSWORD
 
 # egg installatie
 
