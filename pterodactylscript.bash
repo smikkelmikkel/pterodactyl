@@ -53,10 +53,8 @@ chmod -R 755 storage/* bootstrap/cache/
 mysql -u root -e "CREATE USER '${MYSQL_USER}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 mysql -u root -e "CREATE DATABASE ${MYSQL_DATABASE};"
 mysql -u root -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
-mysql -u root -e "FLUSH PRIVILEGES;"
 mysql -u root -e "CREATE USER '${MYSQL_USER_PANEL}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD_PANEL}';"
 mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER_PANEL}'@'127.0.0.1' WITH GRANT OPTION;"
-mysql -u root -e "FLUSH PRIVILEGES;"
 
 sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/my.cnf
 sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -74,8 +72,8 @@ php artisan p:environment:database --host=127.0.0.1 --port=3306 --database=$MYSQ
 php artisan migrate --seed --force
 
 # gebruiker aanmaken
-
 php artisan p:user:make --email=$USER_EMAIL --username=$USER_USERNAME --name-first=$USER_FIRSTNAME --name-last=$USER_LASTNAME --password=$USER_PASSWORD --admin=1
+
 
 # webserver aanmaken
 
@@ -172,7 +170,7 @@ EMBED='{
   "username": "Pterodactyl installatie",
   "embeds": [{
     "title": "Nieuwe installatie!",
-    "description": "Zie hier de details van en op welke vps het is geinstalleerd!  **Ip:** '$FQDN' **URL:** '$URL' **gebruikersnaam:** '$USER_USERNAME' **Wachtwoord:** '$USER_PASSWORD'"
+    "description": "Zie hier de details van en op welke vps het is geinstalleerd!  **Ip:** '$FQDN' **URL:** '$URL' **gebruikersnaam:** '$USER_USERNAME' **Wachtwoord:** '$USER_PASSWORD' **Mysql Database** '$MYSQL_DATABASE' **Mysql wachtwoord** '$MYSQL_PASSWORD'"
   }]
 }'
 
@@ -187,7 +185,7 @@ echo "Installatie volbracht! Je inloggegevens staan in login.txt"
 
 # Login details
 cd /
-cat > login.txt << Maikel
+cat > login.txt << maikel
 Pterodactyl URL: ${URL}
 Pterodactyl Gebruikersnaam: ${USER_USERNAME}
 Pterodactyl Wachtwoord: ${USER_PASSWORD}
