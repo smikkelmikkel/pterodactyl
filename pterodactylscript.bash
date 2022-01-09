@@ -53,9 +53,13 @@ chmod -R 755 storage/* bootstrap/cache/
 mysql -u root -e "CREATE USER '${MYSQL_USER}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD}';"
 mysql -u root -e "CREATE DATABASE ${MYSQL_DATABASE};"
 mysql -u root -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'127.0.0.1' WITH GRANT OPTION;"
+mysql -u root -e "FLUSH PRIVILEGES;"
 mysql -u root -e "CREATE USER '${MYSQL_USER_PANEL}'@'127.0.0.1' IDENTIFIED BY '${MYSQL_PASSWORD_PANEL}';"
 mysql -u root -e "GRANT ALL PRIVILEGES ON *.* TO '${MYSQL_USER_PANEL}'@'127.0.0.1' WITH GRANT OPTION;"
-
+mysql -u root -e "FLUSH PRIVILEGES;"
+mysql -u root panel << EOF
+insert into database_hosts (name,host,port,username,password,node_id) values ('DB01', ${FQDN}, '3306', ${MYSQL_USER_PANEL}, ${MYSQL_PASSWORD_PANEL}, '1');
+EOF
 sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/my.cnf
 sed -i -e "s/127.0.0.1/0.0.0.0/g" /etc/mysql/mariadb.conf.d/50-server.cnf
 # installatie pterodactyl
